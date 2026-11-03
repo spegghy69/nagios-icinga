@@ -15,8 +15,8 @@ traffico e dispositivi Wi-Fi, host connessi.
 Con OMD, il plugin va nella cartella dei plugin del site:
 
 ```bash
-cp check_zte_h388x.py /omd/sites/casa/local/lib/monitoring-plugins/check_zte_h388x
-chmod 755 /omd/sites/casa/local/lib/monitoring-plugins/check_zte_h388x
+cp check_zte_h388x.py /omd/sites/sito/local/lib/monitoring-plugins/check_zte_h388x
+chmod 755 /omd/sites/sito/local/lib/monitoring-plugins/check_zte_h388x
 ```
 
 ## Credenziali
@@ -24,16 +24,16 @@ chmod 755 /omd/sites/casa/local/lib/monitoring-plugins/check_zte_h388x
 Il plugin legge utente e password da un file `KEY=VALUE`:
 
 ```
-# /omd/sites/casa/etc/zte.env
-ZTE_USER=admin
+# /omd/sites/sito/etc/zte.env
+ZTE_USER=user
 ZTE_PASS=la_tua_password
 ```
 
 Permessi: il file deve essere leggibile solo dall'utente del site.
 
 ```bash
-chown casa:casa /omd/sites/casa/etc/zte.env
-chmod 600 /omd/sites/casa/etc/zte.env
+chown sito:sito /omd/sites/sito/etc/zte.env
+chmod 600 /omd/sites/sito/etc/zte.env
 ```
 
 Il plugin si rifiuta di partire se il file è accessibile da altri utenti.
@@ -52,9 +52,9 @@ Il commento dopo `#` viene ignorato. Esempio:
 
 ```
 # dispositivi autorizzati
-86:79:1E:03:EF:B9   iPad            # telefono
-B8:27:EB:E2:7D:1E   berry           # raspberry
-00:0C:29:8C:D3:92   opnsense        # VM
+86:W9:1E:Q3:LF:B9   phone           # telefono
+B8:27:EB:Z3:79:1W   berry           # raspberry
+00:0C:HL:D4:D3:92   vmlinux         # VM
 ```
 
 Regole:
@@ -136,4 +136,18 @@ Perfdata:
 ## Visualizzazione
 
 Thruk non interpreta tag HTML nel long output e non garantisce un font
-monospazio: la tabella dei
+monospazio: la tabella dei dispositivi è leggibile nel terminale con `-v`, e
+nel riassunto del servizio. Non usare il carattere `|` nel long output: Icinga
+lo interpreta come separatore delle perfdata.
+
+## Risoluzione dei problemi
+
+- **`login rifiutato dal modem (login_need_refresh)`**: il login non è stato
+  completato. Verifica le credenziali e che lo User-Agent non sia cambiato.
+- **`sessione non valida (SessionTimeout)`**: la sessione non è legata alla
+  pagina corretta. Il plugin apre prima la pagina del menu, come il browser.
+- **`sezione ... assente nella risposta`**: il modem ha cambiato il formato
+  della pagina dopo un aggiornamento del firmware. Confronta la risposta con
+  quella del browser (F12 → Rete).
+- **Contatori azzerati**: il modem è stato riavviato. Il campione viene scartato
+  e la velocità riparte dal successivo.
